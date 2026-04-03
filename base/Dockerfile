@@ -38,6 +38,13 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/b
 COPY scripts/ /usr/local/lib/devcontainer/
 RUN chmod +x /usr/local/lib/devcontainer/*.sh
 
+ENV SSH_AUTH_SOCK=/ssh-agent
+
+# Mark /workspaces as safe for all users — avoids git's dubious ownership
+# error when the workspace is bind-mounted from the host. Set at system level
+# so the per-user ~/.gitconfig bind-mount doesn't shadow it.
+RUN git config --system safe.directory /workspaces
+
 WORKDIR /workspaces
 USER dev
 

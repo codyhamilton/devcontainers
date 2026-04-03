@@ -14,6 +14,7 @@
     "dockerfile": "../Dockerfile"
   },
   "mounts": [
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind",
     "source=${localEnv:HOME}/.claude,target=/home/dev/.claude,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.claude.json,target=/home/dev/.claude.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.gitconfig,target=/home/dev/.gitconfig,type=bind,consistency=cached",
@@ -28,5 +29,5 @@
   // Update AI CLIs on every container start so they stay current between
   // sessions without requiring a rebuild. claude update uses the native
   // self-updater; codex re-installs via npm (user-owned prefix).
-  "postStartCommand": "bash /usr/local/lib/devcontainer/fix-mount-ownership.sh && bash /usr/local/lib/devcontainer/sync-codex-skills.sh; git config --global --add safe.directory ${containerWorkspaceFolder} || true; claude update || true; npm install -g @openai/codex || true"
+  "postStartCommand": "bash /usr/local/lib/devcontainer/post-start.sh"
 }

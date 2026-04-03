@@ -80,20 +80,11 @@ check_label 'OPENAI_API_KEY in remoteEnv' \
 check_label 'postCreateCommand absent (install baked into image)' \
     '.postCreateCommand == null'
 
-check_label 'postStartCommand references fix-mount-ownership.sh' \
-    '.postStartCommand | (type == "string") and contains("fix-mount-ownership.sh")'
+check_label 'SSH agent mount declared' \
+    '[.mounts[]? | select(contains("/ssh-agent"))] | length > 0'
 
-check_label 'postStartCommand references sync-codex-skills.sh' \
-    '.postStartCommand | (type == "string") and contains("sync-codex-skills.sh")'
-
-check_label 'postStartCommand references git safe.directory' \
-    '.postStartCommand | (type == "string") and contains("safe.directory")'
-
-check_label 'postStartCommand runs claude update' \
-    '.postStartCommand | (type == "string") and contains("claude update")'
-
-check_label 'postStartCommand runs npm install -g @openai/codex' \
-    '.postStartCommand | (type == "string") and contains("npm install -g @openai/codex")'
+check_label 'postStartCommand references post-start.sh' \
+    '.postStartCommand | (type == "string") and contains("post-start.sh")'
 
 # ── In-container checks ───────────────────────────────────────────────────────
 section "Container internals (running as dev)"
@@ -125,8 +116,11 @@ check 'jq available'                          'which jq'
 check 'bwrap (bubblewrap) available'          'which bwrap'
 check 'claude CLI available'                  'which claude'
 check 'codex CLI available'                   'which codex'
+check 'SSH_AUTH_SOCK env set to /ssh-agent'    '[ "$SSH_AUTH_SOCK" = /ssh-agent ]'
+check 'git safe.directory /workspaces (system)' 'git config --system --get-all safe.directory | grep -qx /workspaces'
 check 'fix-mount-ownership.sh executable'     '[ -x /usr/local/lib/devcontainer/fix-mount-ownership.sh ]'
 check 'sync-codex-skills.sh executable'       '[ -x /usr/local/lib/devcontainer/sync-codex-skills.sh ]'
+check 'post-start.sh executable'              '[ -x /usr/local/lib/devcontainer/post-start.sh ]'
 
 # ── sync-codex-skills.sh fails fast without CODEX_SKILL_PREFIX ───────────────
 section "Script behaviour"

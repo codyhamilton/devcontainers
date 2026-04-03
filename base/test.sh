@@ -77,6 +77,9 @@ check_label 'ANTHROPIC_API_KEY in remoteEnv' \
 check_label 'OPENAI_API_KEY in remoteEnv' \
     '.remoteEnv.OPENAI_API_KEY != null'
 
+check_label 'postCreateCommand absent (install baked into image)' \
+    '.postCreateCommand == null'
+
 check_label 'postStartCommand references fix-mount-ownership.sh' \
     '.postStartCommand | (type == "string") and contains("fix-mount-ownership.sh")'
 
@@ -85,6 +88,12 @@ check_label 'postStartCommand references sync-codex-skills.sh' \
 
 check_label 'postStartCommand references git safe.directory' \
     '.postStartCommand | (type == "string") and contains("safe.directory")'
+
+check_label 'postStartCommand runs claude update' \
+    '.postStartCommand | (type == "string") and contains("claude update")'
+
+check_label 'postStartCommand runs npm install -g @openai/codex' \
+    '.postStartCommand | (type == "string") and contains("npm install -g @openai/codex")'
 
 # ── In-container checks ───────────────────────────────────────────────────────
 section "Container internals (running as dev)"

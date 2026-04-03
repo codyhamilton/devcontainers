@@ -29,11 +29,6 @@ RUN useradd -m -s /bin/bash dev \
     && echo "dev ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/dev \
     && chmod 0440 /etc/sudoers.d/dev
 
-# ── AI CLIs ──────────────────────────────────────────────────────────────────
-# Pinned to packages published at least 7 days ago for supply-chain stability.
-RUN npm install -g @anthropic-ai/claude-code @openai/codex \
-    --before="$(date -u -d '7 days ago' +%F)"
-
 # ── uv ───────────────────────────────────────────────────────────────────────
 RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
 
@@ -52,3 +47,23 @@ RUN mkdir -p \
     /home/dev/.claude \
     /home/dev/.codex \
     /home/dev/.cursor
+
+# ── AI CLIs ──────────────────────────────────────────────────────────────────
+# Installed as the dev user so both tools can self-update without elevated
+# privileges.
+#
+# claude: native installer — no npm dependency, supports `claude update`.
+#         Installs to ~/.local/bin.
+#
+# codex: npm is still the only install method; prefix set to ~/.npm-global
+#        so the dev user owns the package tree and can run `npm i -g` updates.
+#        Pinned to packages published at least 7 days ago for supply-chain
+#        stability; postStartCommand refreshes to latest on each container
+#        start.
+ENV PATH="/home/dev/.local/bin:/home/dev/.npm-global/bin:${PATH}"
+
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+RUN npm config set prefix /home/dev/.npm-global && \
+    npm install -g @openai/codex \
+    --before="$(date -u -d '7 days ago' +%F)"

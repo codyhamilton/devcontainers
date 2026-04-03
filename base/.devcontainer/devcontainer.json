@@ -1,0 +1,29 @@
+{
+  // This file is consumed by `devcontainer build` to bake shared config as an
+  // OCI label (devcontainer.metadata) into the base image. It is not intended
+  // to be opened as a live devcontainer directly.
+  //
+  // Build the image:
+  //   devcontainer build \
+  //     --workspace-folder /path/to/devcontainers/base \
+  //     --image-name devcontainers-base:local
+  //
+  // Per-repo devcontainer.json files reference this image and receive all
+  // settings below via label merge at container-create time.
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/home/dev/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.claude.json,target=/home/dev/.claude.json,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gitconfig,target=/home/dev/.gitconfig,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.codex,target=/home/dev/.codex,type=bind,consistency=cached",
+    "source=codex-skills,target=/home/dev/.codex/skills,type=volume",
+    "source=${localEnv:HOME}/.cursor,target=/home/dev/.cursor,type=bind,consistency=cached"
+  ],
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
+  },
+  "postStartCommand": "bash /usr/local/lib/devcontainer/fix-mount-ownership.sh && bash /usr/local/lib/devcontainer/sync-codex-skills.sh && git config --global --add safe.directory ${containerWorkspaceFolder} || true"
+}

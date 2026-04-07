@@ -44,3 +44,10 @@ done
 while IFS= read -r mount_path; do
     repair_mountpoint "$mount_path"
 done < <(printf '%s\n' "${mount_targets[@]}" | awk '!seen[$0]++' | sort)
+
+# Explicitly repair known volume mounts inside the home directory.
+# These are not bind mounts and won't appear as workspace mounts, but Docker
+# creates them root-owned and the container user needs write access.
+for dir in /home/dev/.claude/plugins /home/dev/.codex/skills; do
+    repair_mountpoint "$dir"
+done

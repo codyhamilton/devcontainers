@@ -14,8 +14,8 @@
     "dockerfile": "../Dockerfile"
   },
   "mounts": [
-    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind",
     "source=${localEnv:HOME}/.claude,target=/home/dev/.claude,type=bind,consistency=cached",
+    "source=claude-plugins,target=/home/dev/.claude/plugins,type=volume",
     "source=${localEnv:HOME}/.claude.json,target=/home/dev/.claude.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.gitconfig,target=/home/dev/.gitconfig,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.codex,target=/home/dev/.codex,type=bind,consistency=cached",

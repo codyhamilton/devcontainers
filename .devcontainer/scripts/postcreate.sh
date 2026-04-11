@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs inside the container on every devcontainer start.
+# Runs inside the container once after creation.
 # Each step is independent — a failure is reported but never aborts the script.
 
 set -uo pipefail
@@ -17,9 +17,12 @@ run_step() {
     fi
 }
 
-echo "==> base devcontainer post-start"
+echo "==> base devcontainer postcreate"
 
 run_step "fix mount ownership"  bash /usr/local/lib/devcontainer/fix-mount-ownership.sh
+run_step "symlink host home"    bash /usr/local/lib/devcontainer/symlink-host-home.sh
 run_step "sync codex skills"    bash /usr/local/lib/devcontainer/sync-codex-skills.sh
+run_step "update claude"        claude update
+run_step "update codex"         npm install -g @openai/codex
 
 echo "==> ready"

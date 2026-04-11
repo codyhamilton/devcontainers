@@ -85,5 +85,5 @@ ENV PATH="/home/dev/.local/bin:/home/dev/.npm-global/bin:${PATH}"
 RUN curl -fsSL https://claude.ai/install.sh | bash
 
 RUN npm config set prefix /home/dev/.npm-global && \
-    npm install -g @openai/codex \
+    npm install -g @openai/codex pnpm \
     --before="$(date -u -d '7 days ago' +%F)"

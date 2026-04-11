@@ -44,7 +44,7 @@ ENV SSH_AUTH_SOCK=/ssh-agent
 # Mark /workspaces as safe for all users — avoids git's dubious ownership
 # error when the workspace is bind-mounted from the host. Set at system level
 # so the per-user ~/.gitconfig bind-mount doesn't shadow it.
-RUN git config --system safe.directory /workspaces
+RUN git config --system safe.directory "*"
 
 WORKDIR /workspaces
 USER dev

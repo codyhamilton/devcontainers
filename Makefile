@@ -1,8 +1,4 @@
 IMAGE ?= devcontainers-base:local
-BUILD_ARGS ?=
-ifdef GITHUB_TOKEN
-BUILD_ARGS += --build-arg GITHUB_TOKEN=$(GITHUB_TOKEN)
-endif
 
 .PHONY: build test help
 
@@ -21,8 +17,7 @@ help:
 build:
 	devcontainer build \
 		--workspace-folder . \
-		--image-name $(IMAGE) \
-		$(BUILD_ARGS)
+		--image-name $(IMAGE)
 
 test:
 	./test.sh $(IMAGE)

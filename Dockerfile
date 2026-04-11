@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     wget \
+    gh \
     ca-certificates \
     gnupg \
     lsb-release \
@@ -35,7 +36,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/b
 # ── Devcontainer scripts ──────────────────────────────────────────────────────
 # Baked into the image at a stable path so per-repo hooks can reference them
 # without knowing the workspace checkout location.
-COPY scripts/ /usr/local/lib/devcontainer/
+COPY .devcontainer/scripts/ /usr/local/lib/devcontainer/
 RUN chmod +x /usr/local/lib/devcontainer/*.sh
 
 ENV SSH_AUTH_SOCK=/ssh-agent
@@ -47,6 +48,16 @@ RUN git config --system safe.directory /workspaces
 
 WORKDIR /workspaces
 USER dev
+
+# ── GitHub CLI authentication ────────────────────────────────────────────────────
+# Optional: authenticate gh CLI at build time using a build arg.
+# Token is consumed once during build and never persisted in the image.
+# Usage: devcontainer build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN
+ARG GITHUB_TOKEN=""
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+      echo "$GITHUB_TOKEN" | gh auth login --with-token --hostname github.com && \
+      gh auth status; \
+    fi
 
 # Pre-create bind-mount targets so Docker does not materialize root-owned
 # placeholders at runtime.

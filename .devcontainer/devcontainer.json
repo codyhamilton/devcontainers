@@ -1,3 +1,22 @@
 {
-  "image": "devcontainers-base:local"
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "args": {
+      "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+    }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/home/dev/.claude,type=bind,consistency=cached",
+    "source=claude-plugins,target=/home/dev/.claude/plugins,type=volume",
+    "source=${localEnv:HOME}/.claude.json,target=/home/dev/.claude.json,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.gitconfig,target=/home/dev/.gitconfig,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.codex,target=/home/dev/.codex,type=bind,consistency=cached",
+    "source=codex-skills,target=/home/dev/.codex/skills,type=volume",
+    "source=${localEnv:HOME}/.cursor,target=/home/dev/.cursor,type=bind,consistency=cached"
+  ],
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
+  },
+  "postStartCommand": "bash /usr/local/lib/devcontainer/post-start.sh"
 }

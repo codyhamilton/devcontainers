@@ -11,8 +11,8 @@ help:
 	@echo "  help   Show this help message"
 	@echo ""
 	@echo "Environment variables:"
-	@echo "  IMAGE         Docker image name (default: devcontainers-base:local)"
-	@echo "  GITHUB_TOKEN  Limited-scope GitHub token for gh CLI auth (optional)"
+	@echo "  IMAGE   Docker image name (default: devcontainers-base:local)"
+	@echo "  GH_PAT  Limited-scope GitHub Personal Access Token for gh CLI auth (optional)"
 
 build:
 	devcontainer build \

@@ -2,7 +2,7 @@
   "build": {
     "dockerfile": "../Dockerfile",
     "args": {
-      "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+      "GH_PAT": "${localEnv:GH_PAT}"
     }
   },
   "mounts": [

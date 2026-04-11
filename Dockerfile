@@ -52,10 +52,11 @@ USER dev
 # ── GitHub CLI authentication ────────────────────────────────────────────────────
 # Optional: authenticate gh CLI at build time using a build arg.
 # Token is consumed once during build and never persisted in the image.
-# Usage: devcontainer build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN
-ARG GITHUB_TOKEN=""
-RUN if [ -n "$GITHUB_TOKEN" ]; then \
-      echo "$GITHUB_TOKEN" | gh auth login --with-token --hostname github.com && \
+# Note: Uses GH_PAT (not GITHUB_TOKEN) to avoid conflicts with gh's env var detection.
+# Usage: devcontainer build --build-arg GH_PAT=$GH_PAT
+ARG GH_PAT=""
+RUN if [ -n "$GH_PAT" ]; then \
+      echo "$GH_PAT" | gh auth login --with-token --hostname github.com && \
       gh auth status; \
     fi
 

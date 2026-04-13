@@ -18,6 +18,7 @@
     "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
     "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
   },
+  "runArgs": ["--privileged"],
   "postCreateCommand": "bash /usr/local/lib/devcontainer/postcreate.sh",
   "postStartCommand": "bash /usr/local/lib/devcontainer/post-start.sh"
 }

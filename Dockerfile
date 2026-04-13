@@ -33,6 +33,27 @@ RUN useradd -m -s /bin/bash dev \
 # ── uv ───────────────────────────────────────────────────────────────────────
 RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
 
+# ── Docker CE ────────────────────────────────────────────────────────────────
+# Install the full Docker engine (client + daemon + buildx + compose) so the
+# container can run Docker-in-Docker when started with --privileged.
+RUN install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg \
+       | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && chmod a+r /etc/apt/keyrings/docker.gpg \
+    && printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian %s stable\n' \
+       "$(dpkg --print-architecture)" \
+       "$(. /etc/os-release && echo "$VERSION_CODENAME")" \
+       > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -y \
+       docker-ce \
+       docker-ce-cli \
+       containerd.io \
+       docker-buildx-plugin \
+       docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/* \
+    && usermod -aG docker dev
+
 # ── Devcontainer scripts ──────────────────────────────────────────────────────
 # Baked into the image at a stable path so per-repo hooks can reference them
 # without knowing the workspace checkout location.
@@ -49,24 +70,15 @@ RUN git config --system safe.directory "*"
 WORKDIR /workspaces
 USER dev
 
-# ── GitHub CLI authentication ────────────────────────────────────────────────────
-# Optional: authenticate gh CLI at build time using a build arg.
-# Token is consumed once during build and never persisted in the image.
-# Note: Uses GH_PAT (not GITHUB_TOKEN) to avoid conflicts with gh's env var detection.
-# Check prefix to minimize exposure in build logs.
-# Usage: devcontainer build --build-arg GH_PAT=$GH_PAT
-ARG GH_PAT=""
-RUN if [[ "$GH_PAT" == github_pat_* ]]; then \
-      echo "$GH_PAT" | gh auth login --with-token --hostname github.com && \
-      gh auth status; \
-    fi
-
 # Pre-create bind-mount targets so Docker does not materialize root-owned
 # placeholders at runtime.
 RUN mkdir -p \
     /home/dev/.claude \
     /home/dev/.codex \
     /home/dev/.cursor
+
+ARG GH_PAT
+ENV GH_TOKEN=$GH_PAT
 
 # ── AI CLIs ──────────────────────────────────────────────────────────────────
 # Installed as the dev user so both tools can self-update without elevated

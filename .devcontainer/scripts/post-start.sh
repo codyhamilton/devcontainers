@@ -21,5 +21,6 @@ echo "==> base devcontainer post-start"
 
 run_step "fix mount ownership"  bash /usr/local/lib/devcontainer/fix-mount-ownership.sh
 run_step "sync codex skills"    bash /usr/local/lib/devcontainer/sync-codex-skills.sh
+run_step "start docker daemon"  bash /usr/local/lib/devcontainer/start-docker.sh
 
 echo "==> ready"

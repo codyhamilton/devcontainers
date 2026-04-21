@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     jq \
     bubblewrap \
+    ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Node.js 22 ───────────────────────────────────────────────────────────────

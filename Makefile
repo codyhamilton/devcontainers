@@ -1,4 +1,4 @@
-IMAGE ?= devcontainers-base:local
+IMAGE ?= localhost/devcontainers-base:latest
 
 .PHONY: build test help
 

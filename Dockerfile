@@ -75,6 +75,7 @@ USER dev
 # placeholders at runtime.
 RUN mkdir -p \
     /home/dev/.claude \
+    /home/dev/.copilot \
     /home/dev/.codex \
     /home/dev/.cursor
 
@@ -82,7 +83,7 @@ ARG GH_PAT
 ENV GH_TOKEN=$GH_PAT
 
 # ── AI CLIs ──────────────────────────────────────────────────────────────────
-# Installed as the dev user so both tools can self-update without elevated
+# Installed as the dev user so the tools can self-update without elevated
 # privileges.
 #
 # claude: native installer — no npm dependency, supports `claude update`.
@@ -93,9 +94,13 @@ ENV GH_TOKEN=$GH_PAT
 #        Pinned to packages published at least 7 days ago for supply-chain
 #        stability; postStartCommand refreshes to latest on each container
 #        start.
+# copilot: native installer, supports `copilot update`, installs to
+#          ~/.local/bin, and stores session state in ~/.copilot.
 ENV PATH="/home/dev/.local/bin:/home/dev/.npm-global/bin:${PATH}"
 
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+RUN curl -fsSL https://gh.io/copilot-install | bash
 
 RUN npm config set prefix /home/dev/.npm-global && \
     npm install -g @openai/codex pnpm \

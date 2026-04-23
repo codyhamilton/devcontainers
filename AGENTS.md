@@ -1,7 +1,7 @@
 # Devcontainers — Agent Instructions
 
 ## Project
-Builds a base devcontainer Docker image with AI CLIs (Claude Code, Codex), Node.js 22, `uv`,
+Builds a base devcontainer Docker image with AI CLIs (Claude Code, GitHub Copilot CLI, Codex), Node.js 22, `uv`,
 and lifecycle helper scripts. The `.devcontainer/` at repo root uses the locally built image.
 
 ## Key Commands

@@ -23,6 +23,7 @@ run_step "fix mount ownership"  bash /usr/local/lib/devcontainer/fix-mount-owner
 run_step "symlink host home"    bash /usr/local/lib/devcontainer/symlink-host-home.sh
 run_step "sync codex skills"    bash /usr/local/lib/devcontainer/sync-codex-skills.sh
 run_step "update claude"        claude update
+run_step "update copilot"       copilot update
 run_step "update codex"         npm install -g @openai/codex
 
 echo "==> ready"

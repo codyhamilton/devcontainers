@@ -13,8 +13,7 @@
     "source=${localEnv:HOME}/.copilot,target=/home/dev/.copilot,type=bind,consistency=cached",
     "source=${localEnv:HOME}/.codex,target=/home/dev/.codex,type=bind,consistency=cached",
     "source=codex-skills,target=/home/dev/.codex/skills,type=volume",
-    "source=${localEnv:HOME}/.cursor,target=/home/dev/.cursor,type=bind,consistency=cached",
-    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
+    "source=${localEnv:HOME}/.cursor,target=/home/dev/.cursor,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",

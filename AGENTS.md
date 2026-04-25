@@ -31,5 +31,5 @@ https://containers.dev/implementors/json_reference/
 ## Structure
 - `Dockerfile` — image definition (debian:bookworm-slim base)
 - `scripts/fix-mount-ownership.sh` — repairs bind-mount ownership at container start (reads `/proc/mounts`)
-- `scripts/sync-codex-skills.sh` — symlinks `.claude/skills/` into `~/.codex/skills/` with a prefix
+- `scripts/sync-codex-skills.sh` — copies host `~/.claude/skills/` into `~/.codex/skills/` with a prefix
 - `test.sh` — validates image internals and OCI labels via `docker run`

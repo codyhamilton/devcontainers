@@ -150,6 +150,32 @@ else
     fail "sync-codex-skills.sh failed unexpectedly with CODEX_SKILL_PREFIX set"
 fi
 
+tmp_root=$(mktemp -d)
+trap 'rm -rf "$tmp_root"' EXIT
+
+mkdir -p "$tmp_root/claude/skills/demo-skill" "$tmp_root/codex/skills/test__old-skill" "$tmp_root/codex/skills/custom-skill"
+printf '%s\n' '# Demo Skill' >"$tmp_root/claude/skills/demo-skill/SKILL.md"
+printf '%s\n' 'demo body' >"$tmp_root/claude/skills/demo-skill/body.txt"
+printf '%s\n' '# Old Skill' >"$tmp_root/codex/skills/test__old-skill/SKILL.md"
+printf '%s\n' '# Custom Skill' >"$tmp_root/codex/skills/custom-skill/SKILL.md"
+chmod -R 0777 "$tmp_root"
+
+if docker run --rm --user dev \
+    -e CODEX_SKILL_PREFIX=test__ \
+    -v "$tmp_root/claude:/home/dev/.claude" \
+    -v "$tmp_root/codex/skills:/home/dev/.codex/skills" \
+    "$IMAGE" \
+    bash /usr/local/lib/devcontainer/sync-codex-skills.sh 2>&1 \
+    && [ -f "$tmp_root/codex/skills/test__demo-skill/SKILL.md" ] \
+    && [ -f "$tmp_root/codex/skills/test__demo-skill/body.txt" ] \
+    && [ ! -e "$tmp_root/codex/skills/test__old-skill" ] \
+    && [ -f "$tmp_root/codex/skills/custom-skill/SKILL.md" ] \
+    && [ ! -L "$tmp_root/codex/skills/test__demo-skill" ]; then
+    pass "sync-codex-skills.sh copies host skills into ~/.codex/skills and refreshes prefixed entries"
+else
+    fail "sync-codex-skills.sh did not copy host skills as expected"
+fi
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]

@@ -2,8 +2,7 @@
 
 set -euo pipefail
 
-WORKSPACE_DIR="${containerWorkspaceFolder:-$(pwd)}"
-SOURCE_ROOT="${WORKSPACE_DIR}/.claude/skills"
+SOURCE_ROOT="${HOME}/.claude/skills"
 TARGET_ROOT="${HOME}/.codex/skills"
 
 if [[ -z "${CODEX_SKILL_PREFIX:-}" ]]; then
@@ -15,8 +14,8 @@ PREFIX="${CODEX_SKILL_PREFIX}"
 
 mkdir -p "$TARGET_ROOT"
 
-find "$TARGET_ROOT" -maxdepth 1 -xtype l -name "${PREFIX}*" -print0 2>/dev/null | while IFS= read -r -d '' link_path; do
-    rm -f "$link_path"
+find "$TARGET_ROOT" -mindepth 1 -maxdepth 1 -name "${PREFIX}*" -print0 2>/dev/null | while IFS= read -r -d '' entry_path; do
+    rm -rf "$entry_path"
 done
 
 if [[ ! -d "$SOURCE_ROOT" ]]; then
@@ -27,8 +26,8 @@ find "$SOURCE_ROOT" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r
     [[ -f "$skill_dir/SKILL.md" ]] || continue
 
     skill_name="$(basename "$skill_dir")"
-    target_link="${TARGET_ROOT}/${PREFIX}${skill_name}"
+    target_dir="${TARGET_ROOT}/${PREFIX}${skill_name}"
 
-    rm -rf "$target_link"
-    ln -s "$skill_dir" "$target_link"
+    rm -rf "$target_dir"
+    cp -a "$skill_dir" "$target_dir"
 done
